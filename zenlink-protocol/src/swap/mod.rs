@@ -17,9 +17,6 @@ mod tests;
 
 impl<T: Config> Pallet<T> {
     /// The account ID of a pair account
-    /// only use two byte prefix to support 16 byte account id (used by test)
-    /// "modl" ++ "/zenlink" is 12 bytes, and 4 bytes remaining for hash of AssetId pair.
-    /// for AccountId32, 20 bytes remaining for hash of AssetId pair.
     pub fn pair_account_id(asset_0: AssetId, asset_1: AssetId) -> T::AccountId {
         let (asset_0, asset_1) = Self::sort_asset_id(asset_0, asset_1);
         let pair_hash: T::Hash = T::Hashing::hash_of(&(asset_0, asset_1));
@@ -43,13 +40,13 @@ impl<T: Config> Pallet<T> {
         Self::lp_metadata((asset_0, asset_1)).map(|(pair_account, _)| pair_account)
     }
 
-    pub(crate) fn mutate_lp_pairs(asset_0: AssetId, asset_1: AssetId) {
+    pub fn mutate_lp_pairs(asset_0: AssetId, asset_1: AssetId) {
         LiquidityPairs::<T>::mutate(|pairs| {
             pairs.push(Self::sort_asset_id(asset_0, asset_1));
         })
     }
 
-    pub(crate) fn get_lp_pair(index: u32) -> Option<(AssetId, AssetId)> {
+    pub fn get_lp_pair(index: u32) -> Option<(AssetId, AssetId)> {
         let pairs = Self::lp_pairs();
         let index = index as usize;
         if index >= pairs.len() {
@@ -59,8 +56,17 @@ impl<T: Config> Pallet<T> {
         }
     }
 
+    /// Sorted the foreign id of assets pair
+    pub fn sort_asset_id(asset_0: AssetId, asset_1: AssetId) -> (AssetId, AssetId) {
+        if asset_0 < asset_1 {
+            (asset_0, asset_1)
+        } else {
+            (asset_1, asset_0)
+        }
+    }
+
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn inner_add_liquidity(
+    pub fn inner_add_liquidity(
         who: &T::AccountId,
         asset_0: AssetId,
         asset_1: AssetId,
@@ -123,7 +129,7 @@ impl<T: Config> Pallet<T> {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn inner_remove_liquidity(
+    pub fn inner_remove_liquidity(
         who: &T::AccountId,
         asset_0: AssetId,
         asset_1: AssetId,
@@ -178,7 +184,7 @@ impl<T: Config> Pallet<T> {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn inner_swap_exact_assets_for_assets(
+    pub fn inner_swap_exact_tokens_for_tokens(
         who: &T::AccountId,
         amount_in: AssetBalance,
         amount_out_min: AssetBalance,
@@ -206,7 +212,7 @@ impl<T: Config> Pallet<T> {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn inner_swap_assets_for_exact_assets(
+    pub fn inner_swap_tokens_for_exact_tokens(
         who: &T::AccountId,
         amount_out: AssetBalance,
         amount_in_max: AssetBalance,
@@ -246,7 +252,7 @@ impl<T: Config> Pallet<T> {
             .unwrap_or_else(Zero::zero)
     }
 
-    pub(crate) fn calculate_liquidity(
+    pub fn calculate_liquidity(
         amount_0: AssetBalance,
         amount_1: AssetBalance,
         reserve_0: AssetBalance,
@@ -263,7 +269,7 @@ impl<T: Config> Pallet<T> {
         }
     }
 
-    pub(crate) fn calculate_added_amount(
+    pub fn calculate_added_amount(
         amount_0_desired: AssetBalance,
         amount_1_desired: AssetBalance,
         amount_0_min: AssetBalance,
