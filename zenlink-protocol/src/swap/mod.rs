@@ -17,26 +17,26 @@ mod tests;
 
 impl<T: Config> Pallet<T> {
     /// The account ID of a pair account
-    pub(crate) fn pair_account_id(asset_0: AssetId, asset_1: AssetId) -> T::AccountId {
+    pub fn pair_account_id(asset_0: AssetId, asset_1: AssetId) -> T::AccountId {
         let (asset_0, asset_1) = Self::sort_asset_id(asset_0, asset_1);
 
         T::PalletId::get().into_sub_account((asset_0, asset_1))
     }
 
     /// The account ID of a pair account from storage
-    pub(crate) fn get_pair_account_id(asset_0: AssetId, asset_1: AssetId) -> Option<T::AccountId> {
+    pub fn get_pair_account_id(asset_0: AssetId, asset_1: AssetId) -> Option<T::AccountId> {
         let (asset_0, asset_1) = Self::sort_asset_id(asset_0, asset_1);
 
         Self::lp_metadata((asset_0, asset_1)).map(|(pair_account, _)| pair_account)
     }
 
-    pub(crate) fn mutate_lp_pairs(asset_0: AssetId, asset_1: AssetId) {
+    pub fn mutate_lp_pairs(asset_0: AssetId, asset_1: AssetId) {
         LiquidityPairs::<T>::mutate(|pairs| {
             pairs.push(Self::sort_asset_id(asset_0, asset_1));
         })
     }
 
-    pub(crate) fn get_lp_pair(index: u32) -> Option<(AssetId, AssetId)> {
+    pub fn get_lp_pair(index: u32) -> Option<(AssetId, AssetId)> {
         let pairs = Self::lp_pairs();
         let index = index as usize;
         if index >= pairs.len() {
@@ -47,7 +47,7 @@ impl<T: Config> Pallet<T> {
     }
 
     /// Sorted the foreign id of assets pair
-    pub(crate) fn sort_asset_id(asset_0: AssetId, asset_1: AssetId) -> (AssetId, AssetId) {
+    pub fn sort_asset_id(asset_0: AssetId, asset_1: AssetId) -> (AssetId, AssetId) {
         if asset_0 < asset_1 {
             (asset_0, asset_1)
         } else {
@@ -56,7 +56,7 @@ impl<T: Config> Pallet<T> {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn inner_add_liquidity(
+    pub fn inner_add_liquidity(
         who: &T::AccountId,
         asset_0: AssetId,
         asset_1: AssetId,
@@ -110,7 +110,7 @@ impl<T: Config> Pallet<T> {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn inner_remove_liquidity(
+    pub fn inner_remove_liquidity(
         who: &T::AccountId,
         asset_0: AssetId,
         asset_1: AssetId,
@@ -155,7 +155,7 @@ impl<T: Config> Pallet<T> {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn inner_swap_exact_tokens_for_tokens(
+    pub fn inner_swap_exact_tokens_for_tokens(
         who: &T::AccountId,
         amount_in: AssetBalance,
         amount_out_min: AssetBalance,
@@ -175,7 +175,7 @@ impl<T: Config> Pallet<T> {
     }
 
     #[allow(clippy::too_many_arguments)]
-    pub(crate) fn inner_swap_tokens_for_exact_tokens(
+    pub fn inner_swap_tokens_for_exact_tokens(
         who: &T::AccountId,
         amount_out: AssetBalance,
         amount_in_max: AssetBalance,
@@ -207,7 +207,7 @@ impl<T: Config> Pallet<T> {
             .unwrap_or_else(Zero::zero)
     }
 
-    pub(crate) fn calculate_liquidity(
+    pub fn calculate_liquidity(
         amount_0: AssetBalance,
         amount_1: AssetBalance,
         reserve_0: AssetBalance,
@@ -224,7 +224,7 @@ impl<T: Config> Pallet<T> {
         }
     }
 
-    pub(crate) fn calculate_added_amount(
+    pub fn calculate_added_amount(
         amount_0_desired: AssetBalance,
         amount_1_desired: AssetBalance,
         amount_0_min: AssetBalance,
@@ -320,7 +320,7 @@ impl<T: Config> Pallet<T> {
             .unwrap_or_else(Zero::zero)
     }
 
-    pub(crate) fn get_amount_in_by_path(
+    pub fn get_amount_in_by_path(
         amount_out: AssetBalance,
         path: &[AssetId],
     ) -> Result<Vec<AssetBalance>, DispatchError> {
@@ -348,7 +348,7 @@ impl<T: Config> Pallet<T> {
         Ok(out_vec)
     }
 
-    pub(crate) fn get_amount_out_by_path(
+    pub fn get_amount_out_by_path(
         amount_in: AssetBalance,
         path: &[AssetId],
     ) -> Result<Vec<AssetBalance>, DispatchError> {
