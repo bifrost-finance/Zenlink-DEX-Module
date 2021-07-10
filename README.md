@@ -6,9 +6,9 @@ It should at least work until the following commits
 
 -   rustc 1.53.0-nightly (673d0db5e 2021-03-23)
 -   polkadot.js.org (apps v0.94.2-31)
--   Polkadot release-v0.9.7 @ `5d35bac7408a4cb12a578764217d06f3920b36aa`
--   Cumulus polkadot-v0.9.7 @ `c5c3abf7eb9d4fdfb588d6560efaa8dca66a8dbc`
--   Substrate polkadot-v0.9.7 @ `9c572625f6557dfdb19f47474369a0327d51dfbc`
+-   Polkadot release-v0.9.8 @ `3a10ee63c0b5703a1c802db3438ab7e01344a8ce`
+-   Cumulus polkadot-v0.9.8 @ `4e51d32fdc4636f2d207204a25534e01d5fddf75`
+-   Substrate polkadot-v0.9.8 @ `1b758b2a8d151d97d2242260c465b6df9cb8a7a4`
 
 
 ## Precondition
