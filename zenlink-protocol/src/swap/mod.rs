@@ -561,3 +561,63 @@ impl<T: Config> ExportZenlink<T::AccountId> for Pallet<T> {
         )
     }
 }
+
+impl<AccountId> ExportZenlink<AccountId> for () {
+    fn get_amount_in_by_path(
+        amount_out: AssetBalance,
+        path: &[AssetId],
+    ) -> Result<Vec<AssetBalance>, DispatchError> {
+        unimplemented!()
+    }
+
+    fn get_amount_out_by_path(
+        amount_in: AssetBalance,
+        path: &[AssetId],
+    ) -> Result<Vec<AssetBalance>, DispatchError> {
+        unimplemented!()
+    }
+
+    fn inner_swap_assets_for_exact_assets(
+        who: &AccountId,
+        amount_out: AssetBalance,
+        amount_in_max: AssetBalance,
+        path: &[AssetId],
+        recipient: &AccountId,
+    ) -> DispatchResult {
+        unimplemented!()
+    }
+
+    fn inner_swap_exact_assets_for_assets(
+        who: &AccountId,
+        amount_in: AssetBalance,
+        amount_out_min: AssetBalance,
+        path: &[AssetId],
+        recipient: &AccountId,
+    ) -> DispatchResult {
+        unimplemented!()
+    }
+
+    fn inner_add_liquidity(
+        who: &AccountId,
+        asset_0: AssetId,
+        asset_1: AssetId,
+        amount_0_desired: AssetBalance,
+        amount_1_desired: AssetBalance,
+        amount_0_min: AssetBalance,
+        amount_1_min: AssetBalance,
+    ) -> DispatchResult {
+        unimplemented!()
+    }
+
+    fn inner_remove_liquidity(
+        who: &AccountId,
+        asset_0: AssetId,
+        asset_1: AssetId,
+        remove_liquidity: AssetBalance,
+        amount_0_min: AssetBalance,
+        amount_1_min: AssetBalance,
+        recipient: &AccountId,
+    ) -> DispatchResult {
+        unimplemented!()
+    }
+}
