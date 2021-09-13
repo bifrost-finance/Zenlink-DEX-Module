@@ -34,7 +34,7 @@ impl<T: Config> Pallet<T> {
     }
 
     /// The account ID of a pair account from storage
-    pub fn get_pair_account_id(asset_0: AssetId, asset_1: AssetId) -> Option<T::AccountId> {
+    pub fn pair_account_id_in_storage(asset_0: AssetId, asset_1: AssetId) -> Option<T::AccountId> {
         let (asset_0, asset_1) = Self::sort_asset_id(asset_0, asset_1);
 
         Self::lp_metadata((asset_0, asset_1)).map(|(pair_account, _)| pair_account)
@@ -46,7 +46,7 @@ impl<T: Config> Pallet<T> {
         })
     }
 
-    pub fn get_lp_pair(index: u32) -> Option<(AssetId, AssetId)> {
+    pub fn lp_pair(index: u32) -> Option<(AssetId, AssetId)> {
         let pairs = Self::lp_pairs();
         let index = index as usize;
         if index >= pairs.len() {
@@ -182,11 +182,11 @@ impl<T: Config> Pallet<T> {
         path: &[AssetId],
         recipient: &T::AccountId,
     ) -> DispatchResult {
-        let amounts = Self::get_amount_out_by_path(amount_in, &path)?;
+        let amounts = Self::amount_out_by_path(amount_in, &path)?;
         ensure!(amounts[amounts.len() - 1] >= amount_out_min, Error::<T>::InsufficientTargetAmount);
 
         let pair_account =
-            Self::get_pair_account_id(path[0], path[1]).ok_or(Error::<T>::PairNotExists)?;
+            Self::pair_account_id_in_storage(path[0], path[1]).ok_or(Error::<T>::PairNotExists)?;
 
         T::MultiAssetsHandler::transfer(path[0], who, &pair_account, amount_in)?;
         Self::swap(&amounts, &path, &recipient)?;
@@ -210,12 +210,12 @@ impl<T: Config> Pallet<T> {
         path: &[AssetId],
         recipient: &T::AccountId,
     ) -> DispatchResult {
-        let amounts = Self::get_amount_in_by_path(amount_out, &path)?;
+        let amounts = Self::amount_in_by_path(amount_out, &path)?;
 
         ensure!(amounts[0] <= amount_in_max, Error::<T>::ExcessiveSoldAmount);
 
         let pair_account =
-            Self::get_pair_account_id(path[0], path[1]).ok_or(Error::<T>::PairNotExists)?;
+            Self::pair_account_id_in_storage(path[0], path[1]).ok_or(Error::<T>::PairNotExists)?;
 
         T::MultiAssetsHandler::transfer(path[0], who, &pair_account, amounts[0])?;
         Self::swap(&amounts, &path, recipient)?;
@@ -306,7 +306,7 @@ impl<T: Config> Pallet<T> {
         )
     }
 
-    fn get_amount_in(
+    fn amount_in(
         output_amount: AssetBalance,
         input_reserve: AssetBalance,
         output_reserve: AssetBalance,
@@ -331,7 +331,7 @@ impl<T: Config> Pallet<T> {
             .unwrap_or_else(Zero::zero)
     }
 
-    fn get_amount_out(
+    fn amount_out(
         input_amount: AssetBalance,
         input_reserve: AssetBalance,
         output_reserve: AssetBalance,
@@ -359,7 +359,7 @@ impl<T: Config> Pallet<T> {
             .unwrap_or_else(Zero::zero)
     }
 
-    pub fn get_amount_in_by_path(
+    pub fn amount_in_by_path(
         amount_out: AssetBalance,
         path: &[AssetId],
     ) -> Result<Vec<AssetBalance>, DispatchError> {
@@ -376,7 +376,7 @@ impl<T: Config> Pallet<T> {
 
             ensure!(reserve_1 > Zero::zero() && reserve_0 > Zero::zero(), Error::<T>::InvalidPath);
 
-            let amount = Self::get_amount_in(out_vec[len - 1 - i], reserve_1, reserve_0);
+            let amount = Self::amount_in(out_vec[len - 1 - i], reserve_1, reserve_0);
             ensure!(amount > One::one(), Error::<T>::InvalidPath);
 
             out_vec.push(amount);
@@ -387,7 +387,7 @@ impl<T: Config> Pallet<T> {
         Ok(out_vec)
     }
 
-    pub fn get_amount_out_by_path(
+    pub fn amount_out_by_path(
         amount_in: AssetBalance,
         path: &[AssetId],
     ) -> Result<Vec<AssetBalance>, DispatchError> {
@@ -403,7 +403,7 @@ impl<T: Config> Pallet<T> {
 
             ensure!(reserve_1 > Zero::zero() && reserve_0 > Zero::zero(), Error::<T>::InvalidPath);
 
-            let amount = Self::get_amount_out(out_vec[i], reserve_0, reserve_1);
+            let amount = Self::amount_out(out_vec[i], reserve_0, reserve_1);
             ensure!(amount > Zero::zero(), Error::<T>::InvalidPath);
             out_vec.push(amount);
         }
@@ -428,10 +428,10 @@ impl<T: Config> Pallet<T> {
                 amount1_out = AssetBalance::default();
             }
             let pair_account =
-                Self::get_pair_account_id(asset_0, asset_1).ok_or(Error::<T>::PairNotExists)?;
+                Self::pair_account_id_in_storage(asset_0, asset_1).ok_or(Error::<T>::PairNotExists)?;
 
             if i < (amounts.len() - 2) {
-                let mid_account = Self::get_pair_account_id(output, path[i + 2])
+                let mid_account = Self::pair_account_id_in_storage(output, path[i + 2])
                     .ok_or(Error::<T>::PairNotExists)?;
                 Self::pair_swap(
                     asset_0,

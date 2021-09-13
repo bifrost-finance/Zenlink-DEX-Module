@@ -126,13 +126,13 @@ impl<T: Config> Pallet<T> {
     }
 
     pub fn supply_out_amount(supply: AssetBalance, path: Vec<AssetId>) -> AssetBalance {
-        Self::get_amount_out_by_path(supply, &path).map_or(AssetBalance::default(), |amounts| {
+        Self::amount_out_by_path(supply, &path).map_or(AssetBalance::default(), |amounts| {
             *amounts.last().unwrap_or(&AssetBalance::default())
         })
     }
 
     pub fn desired_in_amount(desired_amount: AssetBalance, path: Vec<AssetId>) -> AssetBalance {
-        Self::get_amount_in_by_path(desired_amount, &path)
+        Self::amount_in_by_path(desired_amount, &path)
             .map_or(AssetBalance::default(), |amounts| {
                 *amounts.first().unwrap_or(&AssetBalance::default())
             })

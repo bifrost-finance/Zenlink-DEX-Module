@@ -132,7 +132,7 @@ fn foreign_get_in_price_should_work() {
         let path = vec![DOT_ASSET_ID, BTC_ASSET_ID];
         let amount_in = 1 * DOT_UNIT;
 
-        let target_amount = DexPallet::get_amount_out_by_path(amount_in, &path).unwrap();
+        let target_amount = DexPallet::amount_out_by_path(amount_in, &path).unwrap();
 
         // println!("target_amount {:#?}", target_amount);
         assert_eq!(target_amount, vec![1000000000000000, 99690060]);
@@ -145,7 +145,7 @@ fn foreign_get_in_price_should_work() {
         let path = vec![BTC_ASSET_ID, DOT_ASSET_ID];
         let amount_in = 1 * BTC_UNIT;
 
-        let target_amount = DexPallet::get_amount_out_by_path(amount_in, &path).unwrap();
+        let target_amount = DexPallet::amount_out_by_path(amount_in, &path).unwrap();
 
         // println!("target_amount {:#?}", target_amount);
         assert_eq!(target_amount, vec![100000000, 996900609009281]);
@@ -179,7 +179,7 @@ fn foreign_get_out_price_should_work() {
         let path = vec![DOT_ASSET_ID, BTC_ASSET_ID];
         let amount_out = 1 * BTC_UNIT;
 
-        let target_amount = DexPallet::get_amount_in_by_path(amount_out, &path).unwrap();
+        let target_amount = DexPallet::amount_in_by_path(amount_out, &path).unwrap();
 
         // println!("target_amount {:#?}", target_amount);
         assert_eq!(target_amount, vec![1003010030091274, 100000000]);
@@ -191,7 +191,7 @@ fn foreign_get_out_price_should_work() {
 
         let path = vec![BTC_ASSET_ID, DOT_ASSET_ID];
         let amount_out = 1 * DOT_UNIT;
-        let target_amount = DexPallet::get_amount_in_by_path(amount_out, &path).unwrap();
+        let target_amount = DexPallet::amount_in_by_path(amount_out, &path).unwrap();
 
         // println!("target_amount {:#?}", target_amount);
         assert_eq!(target_amount, vec![100301004, 1000000000000000]);

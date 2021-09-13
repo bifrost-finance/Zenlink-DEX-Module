@@ -26,7 +26,7 @@ impl<T: Config> Pallet<T> {
         target: &T::AccountId,
         amount: AssetBalance,
     ) -> DispatchResult {
-        let pair = Self::get_lp_pair(id.asset_index).ok_or(Error::<T>::AssetNotExists)?;
+        let pair = Self::lp_pair(id.asset_index).ok_or(Error::<T>::AssetNotExists)?;
 
         let owner_balance = <LiquidityLedger<T>>::get((&pair, owner));
         ensure!(owner_balance >= amount, Error::<T>::InsufficientAssetBalance);
@@ -50,7 +50,7 @@ impl<T: Config> Pallet<T> {
         owner: &T::AccountId,
         amount: AssetBalance,
     ) -> DispatchResult {
-        let pair = Self::get_lp_pair(id.asset_index).ok_or(Error::<T>::AssetNotExists)?;
+        let pair = Self::lp_pair(id.asset_index).ok_or(Error::<T>::AssetNotExists)?;
 
         let new_balance = <LiquidityLedger<T>>::get((pair, owner))
             .checked_add(amount)
@@ -77,7 +77,7 @@ impl<T: Config> Pallet<T> {
         owner: &T::AccountId,
         amount: AssetBalance,
     ) -> DispatchResult {
-        let pair = Self::get_lp_pair(id.asset_index).ok_or(Error::<T>::AssetNotExists)?;
+        let pair = Self::lp_pair(id.asset_index).ok_or(Error::<T>::AssetNotExists)?;
 
         let new_balance = <LiquidityLedger<T>>::get((pair, owner))
             .checked_sub(amount)
@@ -102,7 +102,7 @@ impl<T: Config> Pallet<T> {
 
     /// Get the local liquidity `id` balance of `owner`.
     pub fn lp_balance_of(id: AssetId, owner: &T::AccountId) -> AssetBalance {
-        if let Some(pair) = Self::get_lp_pair(id.asset_index) {
+        if let Some(pair) = Self::lp_pair(id.asset_index) {
             Self::lp_ledger((pair, owner))
         } else {
             Default::default()
@@ -112,7 +112,7 @@ impl<T: Config> Pallet<T> {
     /// Get the total supply of an foreign `id`.
     /// return default value if none
     pub fn lp_total_supply(id: AssetId) -> AssetBalance {
-        if let Some(pair) = Self::get_lp_pair(id.asset_index) {
+        if let Some(pair) = Self::lp_pair(id.asset_index) {
             Self::lp_metadata(pair).map(|(_, total)| total).unwrap_or_default()
         } else {
             Default::default()
@@ -120,6 +120,6 @@ impl<T: Config> Pallet<T> {
     }
 
     pub fn lp_is_exists(id: AssetId) -> bool {
-        Self::get_lp_pair(id.asset_index).is_some()
+        Self::lp_pair(id.asset_index).is_some()
     }
 }
