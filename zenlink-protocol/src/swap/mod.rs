@@ -56,15 +56,6 @@ impl<T: Config> Pallet<T> {
         }
     }
 
-    /// Sorted the foreign id of assets pair
-    pub fn sort_asset_id(asset_0: AssetId, asset_1: AssetId) -> (AssetId, AssetId) {
-        if asset_0 < asset_1 {
-            (asset_0, asset_1)
-        } else {
-            (asset_1, asset_0)
-        }
-    }
-
     #[allow(clippy::too_many_arguments)]
     pub fn inner_add_liquidity(
         who: &T::AccountId,
